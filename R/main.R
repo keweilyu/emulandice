@@ -66,7 +66,7 @@ main <- function(expt = "default",
   stopifnot(expt %in% c("default", "timeseries", # --> projections for timeslice or full time series
                         "sim_only", "SA", # --> plot simulations or param dep, NOT projections
                         "high_res", # ice sheet model selection
-                        "CMIP6", "gamma0_MeanAnt", "gamma0_PIGL", "gamma0_unif", "gamma0_unif_high",
+                        "CMIP6", "CMIP5", "gamma0_MeanAnt", "gamma0_PIGL", "gamma0_unif", "gamma0_unif_high",
                         "fixed_melt", "fixed_T")) # -> priors
 
   # options --------------------------------------
@@ -280,7 +280,8 @@ main <- function(expt = "default",
 
   # CLIMATE PRIOR
   if (expt == "CMIP6") temp_prior <- "CMIP6"
-
+  if (expt == "CMIP5") temp_prior <- "CMIP5"
+  
   # N_temp = N_FAIR for timeseries projections, otherwise use N_temp
   if (temp_prior == "FAIR" && expt == "timeseries") N_temp <- N_FAIR
 
@@ -289,7 +290,7 @@ main <- function(expt = "default",
   else N_melt_Tdep <- 1L # Projections etc
 
   # Density estimate to get more climate values
-  climate_prior_kde <- ifelse(temp_prior == "CMIP6", TRUE, FALSE)
+  climate_prior_kde <- ifelse(temp_prior %in% c("CMIP5", "CMIP6"), TRUE, FALSE)
 
   # Use mean melt instead of sampling distribution
   if (expt == "fixed_melt") mean_melt <- TRUE
@@ -504,7 +505,7 @@ main <- function(expt = "default",
   e$years_pred <- paste0("y", e$years_pred)
 
   # READ CLIMATE PRIOR
-  stopifnot(temp_prior %in% c( "FAIR", "CMIP6"))
+  stopifnot(temp_prior %in% c( "FAIR", "CMIP6", "CMIP5"))
   read_forcing(scenario_list, temp_prior, N_temp, climate_prior_kde, mean_temp, dataset)
 
   # READ SEA LEVEL PROJECTIONS
