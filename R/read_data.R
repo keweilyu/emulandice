@@ -102,7 +102,7 @@ read_forcing <- function(scenario_list, temp_prior, N_temp, climate_prior_kde, m
     fd %>%
       filter( ensemble %in% c("CMIP5", "CMIP6", "FAIR"))
   }
-  if (temp_prior == "CMIP6") {
+  if (temp_prior %in% c("CMIP5", "CMIP6")) {
     fd %>%
       filter( ensemble %in% c("CMIP5", "CMIP6"))
   }
@@ -233,10 +233,10 @@ read_forcing <- function(scenario_list, temp_prior, N_temp, climate_prior_kde, m
 
       forcing_sc <- unlist(forcing_sc, use.names = FALSE)
 
-      # Default for CMIP6 prior
+      # Default for CMIP6 or CMIP5 prior
       if (climate_prior_kde) {
 
-        # Sample from density estimate: CMIP6 for 2100
+        # Sample from density estimate: CMIP6 or CMIP5 for 2100
         forcing_dens <- density(forcing_sc, n = 10000) # kde
         e$forcing_prior[[scen]] <- sample(forcing_dens$x, N_temp, replace = TRUE,
                                           prob = forcing_dens$y)
@@ -283,6 +283,11 @@ read_forcing <- function(scenario_list, temp_prior, N_temp, climate_prior_kde, m
       ytext <- 150
       yinc <- 23
       subfig <- "b"
+    }
+    if (temp_prior == "CMIP5") {
+      ytext <- 150
+      yinc <- 23
+      subfig <- "c"
     }
 
     for (scen in scenario_list[[temp_prior]]) {
